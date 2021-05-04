@@ -4,16 +4,18 @@ import fetchProgress from 'fetch-progress';
 
 import { Image } from './image';
 
-const canvas = new OffscreenCanvas(320, 200);
-let context = canvas.getContext('webgl2') as
-  | WebGLRenderingContext
-  | WebGL2RenderingContext
-  | null;
-if (!context) {
-  context = canvas.getContext('webgl');
-  if (context) tf_webgl.setWebGLContext(1, context as WebGLRenderingContext);
-} else {
-  tf_webgl.setWebGLContext(2, context as WebGL2RenderingContext);
+if (typeof OffscreenCanvas !== "undefined") {
+  const canvas = new OffscreenCanvas(320, 200);
+  let context = canvas.getContext('webgl2') as
+    | WebGLRenderingContext
+    | WebGL2RenderingContext
+    | null;
+  if (!context) {
+    context = canvas.getContext('webgl');
+    if (context) tf_webgl.setWebGLContext(1, context as WebGLRenderingContext);
+  } else {
+    tf_webgl.setWebGLContext(2, context as WebGL2RenderingContext);
+  }
 }
 
 class ParamsObject {
@@ -148,7 +150,7 @@ export class Predictor {
    * @returns
    */
   async predict(image: ImageBitmap, isNoise: boolean): Promise<ImageBitmap> {
-    if (this._modelFetchProgress < 0.999999) await this._modelFetchPromise;
+    await this._modelFetchPromise;
     this._modelPredictProgress = 0;
     this._modelPredictCallback(this._modelPredictProgress);
     if (!this._initialized) this._loadModel();
