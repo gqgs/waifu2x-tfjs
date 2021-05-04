@@ -277,6 +277,6 @@ export class Predictor {
     this._initialized = false;
     this._modelFetchProgress = 0;
     this._modelPredictProgress = 0;
-    this._model?.dispose();
+    this._model && this._model.dispose();
   }
 }
